@@ -6,9 +6,12 @@ public class Player : MonoBehaviour
 {
     [SerializeField]float charSpeed = 8;
     [SerializeField] int playerHealth = 3;
+    Ball ball;
+    UIManager uiManager;
     void Start()
     {
-        
+        ball = GameObject.Find("Ball").GetComponent<Ball>();
+        uiManager = GameObject.Find("UI").GetComponent<UIManager>();
     }
 
     void Update()
@@ -19,7 +22,7 @@ public class Player : MonoBehaviour
     void Movement()
     {
         float horizontalInput = Input.GetAxis("Horizontal");
-        Vector3 position = new Vector3(horizontalInput, 0, 0);
+        Vector2 position = new Vector2(horizontalInput, 0);
         transform.Translate(position * charSpeed * Time.deltaTime);
         if (transform.position.x <= -7.5f)
         {
@@ -34,6 +37,7 @@ public class Player : MonoBehaviour
     public void ReduceHealth()
     {
         playerHealth--;
+        uiManager.ReduceHealth(playerHealth);
         if (playerHealth < 1)
         {
             Debug.Log("G a m e   O v e r !");
@@ -42,10 +46,16 @@ public class Player : MonoBehaviour
 
     private void OnTriggerEnter2D(Collider2D other) 
     {
-        if(other.gameObject.name == "+1BallPup")
+        if(other.tag == "Powerup")
         {
-            //create another ball in the ball's position
+            GameObject powerUp = other.gameObject; 
+            Destroy(powerUp);
         }
         
     }    
+    void SpawnBallPup()
+    {
+        ball = GameObject.FindWithTag("Ball").GetComponent<Ball>();
+        ball.SpawnOtherBall();        
+    }
 }

@@ -6,7 +6,9 @@ public class Ball : MonoBehaviour
 {
     Rigidbody2D ballRigidbody;
     [SerializeField] float ballSpeed = 1;
+    [SerializeField] GameObject powerup;
     GameManager gameManager;
+    [SerializeField] GameObject ball;
     void Start()
     {
         ballRigidbody = GetComponent<Rigidbody2D>();
@@ -17,16 +19,22 @@ public class Ball : MonoBehaviour
     private void OnCollisionEnter2D(Collision2D other)
     {
         ballRigidbody.AddTorque(50 , ForceMode2D.Force);
-        if (other.gameObject.name == "Player")
+        if (other.gameObject.tag == "Player")
         {
             Debug.Log("Hit the player");
         }   
-        if (other.gameObject.name == "Block")
+        if (other.gameObject.tag == "Breakable")
         {
-            Debug.Log("BONK here is a block");
             GameObject block = other.gameObject;
+            Debug.Log("BONK here is a block");
+            int chance = Random.Range(1,10);
+            if (chance == 1)
+            {
+                Instantiate(powerup, block.transform.position, block.transform.rotation);
+            }
             Destroy(block);
         } 
+        
     }
     IEnumerator SpawnMovingWait()
     {
@@ -47,6 +55,11 @@ public class Ball : MonoBehaviour
     void BallFallen()
     {
         Destroy(gameObject);
+    }
+
+    public void SpawnOtherBall()
+    {
+        Instantiate(ball, transform.position, Random.rotation);
     }
 
     
